@@ -2,65 +2,62 @@
 #include <avr/interrupt.h>
 
 int button = 0;
-int flag = 0;
+int tcnt_value;
 
-ISR(TIMER0_COMP_vect){ //compare match 인터럽트 루틴
-	if(flag == 0){
-		flag = 1;
+void setPWM();
+void setEInterrupt();
+
+ISR(TIMER0_OVF_vect){
+	if(button == 0){
+		TCNT0 = 255 - 250; //2KHz
+		tcnt_value = 255 - 250; 
 	}
 	else{
-		flag = 0;
+		TCNT0 = 255 - 25; //20KHz
+		tcnt_value = 255 - 250;
 	}
 }
 
-ISR(INT0_vect){ //1번
+ISR(INT0_vect){
 	button = 0;
 }
 
-ISR(INT1_vect){ //2번
+ISR(INT1_vect){
 	button = 1;
 }
 
-
-void setting_CTC(void); //CTC세팅
-void setting_EInterrupt(void); //외부 인터럽트 세팅
-
 int main(void){
-	DDRA |= 0xFF;
-	DDRB |= 0xFF;
+	int i = 0;
+	DDRB |= 0x10; // 0 0 0 1 0 0 0 0 : OC0 출력설정
 	
-	setting_CTC();
-	setting_EInterrupt();
-	
-	sei(); // global interrupt enable
+	setEInterrupt();
+	setPWM();
+	sei();
 	
 	while(1){
-		if(button == 0){ //1KHz
-			OCR0 = 250;
+		OCR0 = tcnt_value;
+			
+		for(i = tcnt_value; i < 0xFF*120; i++){
+			if((i - tcnt_value) % 120 == 0){
+				OCR0++;
+			}
 		}
-		else if(button == 1){ //10KHz
-			OCR0 = 25;
-		}
-		
-		if(flag == 1){
-			PORTA |= 0xFF;
-		}
-		else{
-			PORTA &= 0x00;
+			
+		for(i = tcnt_value; i < 0xFF*120; i++){
+			if((i - tcnt_value) % 120 == 0){
+				OCR0--;
+			}
 		}
 	}
 }
 
-void setting_CTC(void){
-	TCCR0 |= 0x1B; // 0 0 0 1 1 0 1 1
-	TIMSK |= 0x02; // 0 0 0 0 0 0 1 0
-	//TIMSK = TIMSK | (1 << OCIE0); 
-	
-	OCR0 = 250; //1KHz
+void setPWM(){ // FastPWM설정
+	TCCR0 |= 0x6B; // 0 1 1 0 1 0 0 1
+	TIMSK |= 0x01; // 0 0 0 0 0 0 0 1
+	TCNT0 = 255 - 250; //2KHz
 }
 
-void setting_EInterrupt(void){
-	EICRA |= 0x0A; //0 0 0 0 1 0 1 0 (0, 1번을 falling edge시 인터럽트)
-	EIMSK |= 0x03; //0 0 0 0 0 0 1 1 (0, 1번의 인터럽트 허용)
+void setEInterrupt(){ // 외부 인터럽트 설정
+	EICRA |= 0x0A; // 0 0 0 0 1 0 1 0
+	EIMSK |= 0x03; // EIMSK = EIMSK | ((1 << INT0) | (1 << INT1));
 }
-
