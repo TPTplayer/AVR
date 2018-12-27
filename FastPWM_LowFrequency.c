@@ -10,7 +10,7 @@ int option = 0; //0: decrease, 1: increase
 
 void setPWM();
 void setEInterrupt();
-void setTC_for_OneSec();
+void setTC_for_PWM_Duty();
 
 ISR(TIMER0_OVF_vect){
 	if(button == 0){
@@ -86,7 +86,7 @@ int main(void){
 	DDRB |= 0x10; // 0 0 0 1 0 0 0 0 : OC0 출력설정
 	
 	setEInterrupt();
-	setTC_for_OneSec();
+	setTC_for_PWM_Duty();
 	setPWM();
 	sei();
 	
@@ -108,7 +108,7 @@ void setEInterrupt(){ // 외부 인터럽트 설정
 	EIMSK |= 0x03; // EIMSK = EIMSK | ((1 << INT0) | (1 << INT1));
 }
 
-void setTC_for_OneSec(){ //Timer/Counter2
+void setTC_for_PWM_Duty(){ //Timer/Counter2
 	TCCR2 |= 0x04; // 0 0 0 0 0 1 0 0
 	TIMSK |= 0x40; // TIMSK = TIMSK | (1 << TOIE2);
 }
