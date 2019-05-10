@@ -40,17 +40,23 @@ void CLCD_initalizer(void){
 	CLCD_Controller(DISPLAY_ON);
 	_delay_us(40);
 	CLCD_Controller(CLEAR_DISPLAY);
-	_delay_ms(2);
+	_delay_ms(1.53);
 	CLCD_Controller(ENTRY_NO_SHIFT);
 }
-/*
+
 void CLCD_input_font(char *font, int font_num){
+	CLCD_Controller(CLCD_CG_RAM_BASE);
+	_delay_ms(2);
+	
 	for(int i = 0; i < font_num; i++){
-		CLCD_Controller(CLCD_CG_RAM_BASE | font);
-		
+		CLCD_DataTransmitter(font[i]);
 	}
 }
-*/
+
+void CLCD_print_font(char addr, char font_addr){
+	CLCD_Controller(addr | CLCD_DD_RAM_BASE);
+	CLCD_DataTransmitter(font_addr);
+}
 
 void CLCD_putstr(char addr, char *str){
 	int char_count = 0;

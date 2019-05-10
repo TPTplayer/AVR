@@ -29,8 +29,8 @@ I/D = 1: cursor move right
 #define SHIFT_DISPLAY_SCREEN_RIGHT 0b00011000
 #define SHIFT_DISPLAY_SCREEN_LEFT 0b00011100 
 
-#define CLCD_CG_RAM_BASE 0x40 //0100 0000
-#define CLCD_DD_RAM_BASE 0x80 //1000 0000
+#define CLCD_CG_RAM_BASE 0x40 
+#define CLCD_DD_RAM_BASE 0x80 
 
 #define FUNC_DATA_LINE_4 0b00100000
 #define FUNC_DATA_LINE_8 0b00110000
@@ -43,5 +43,7 @@ void CLCD_DataTransmitter(char data);
 void CLCD_Controller(char ctl);
 void CLCD_initalizer(void);
 void CLCD_putstr(char addr, char *str);
+void CLCD_input_font(char *font, int font_num);
+void CLCD_print_font(char addr, char font_addr);
 
 #endif
