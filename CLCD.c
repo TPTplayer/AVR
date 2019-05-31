@@ -89,8 +89,12 @@ void CLCD_move_cursor_s(char x, char y){
 }
 
 void CLCD_input_font(char *font, int font_num, char cg_ram_addr){
-	CLCD_Controller(CLCD_CG_RAM_BASE | cg_ram_addr);
+	CLCD_Controller(CLCD_CG_RAM_BASE);
 	_delay_ms(2);
+	
+	for(int i = 0; i < (cg_ram_addr * 8); i++){
+		CLCD_DataTransmitter(0x00);
+	}
 	
 	for(int i = 0; i < font_num; i++){
 		CLCD_DataTransmitter(font[i]);
