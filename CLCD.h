@@ -1,7 +1,6 @@
 ﻿#ifndef CLCD_H_
 #define CLCD_H_
 
-
 #define RS 0x04
 #define RW 0x02
 #define E 0x01
@@ -29,8 +28,8 @@ I/D = 1: cursor move right
 #define SHIFT_DISPLAY_SCREEN_RIGHT 0b00011000
 #define SHIFT_DISPLAY_SCREEN_LEFT 0b00011100 
 
-#define CLCD_CG_RAM_BASE 0x40 
-#define CLCD_DD_RAM_BASE 0x80 
+#define CLCD_CG_RAM_BASE 0x40 //Character Generator RAM base address
+#define CLCD_DD_RAM_BASE 0x80 //Data 
 
 #define FUNC_DATA_LINE_4 0b00100000
 #define FUNC_DATA_LINE_8 0b00110000
@@ -43,7 +42,10 @@ void CLCD_DataTransmitter(char data);
 void CLCD_Controller(char ctl);
 void CLCD_initalizer(void);
 void CLCD_putstr(char addr, char *str);
-void CLCD_input_font(char *font, int font_num);
+void CLCD_printstr(char addr, char *str, char size);
+void CLCD_move_cursor(char addr);
+void CLCD_move_cursor_s(char x, char y);
+void CLCD_input_font(char *font, int font_num, char cg_ram_addr);
 void CLCD_print_font(char addr, char font_addr);
-
+void CLCD_font_initailizer(void);
 #endif
